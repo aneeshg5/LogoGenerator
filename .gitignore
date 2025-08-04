@@ -1,0 +1,40 @@
+gitignore
+# Dependency directories
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Next.js build output
+.next/
+out/
+
+# Debugging and log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# Editor and IDE specific files
+.vscode/
+.idea/
+
+# Other generated files
+dist/
+build/
+*.log
+
+# Sensitive files
+*.key
+*.pem
+*.cer
+*.pfx
+
+# Firebase and other cloud provider specific files (optional, depending on your setup)
+firebase-debug.log
+.firebase/
