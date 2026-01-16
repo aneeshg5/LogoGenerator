@@ -13,6 +13,14 @@ node_modules/
 .next/
 out/
 
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Debugging and log files
 npm-debug.log*
 yarn-debug.log*

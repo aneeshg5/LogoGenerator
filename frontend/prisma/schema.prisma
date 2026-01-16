@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  username       String    @unique
+  email          String    @unique
+  image          String?
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  accounts       Account[]
+  sessions       Session[]
+  logos          Logo[]
+  payments       Payment[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  access_token      String? @db.Text
+  refresh_token     String? @db.Text
+  expires_at        Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Core business model - enhanced for future features
+model Logo {
+  id          String        @id @default(cuid())
+  name        String
+  url         String
+  userId      String
+  prompt      String
+  style       String?
+  settings    Json?
+  isPublic    Boolean       @default(false)
+  downloads   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions    LogoVersion[]
+  
+  @@index([userId])
+  @@index([isPublic, createdAt])
+  @@index([downloads])
+}
+
+model LogoVersion {
+  id              String   @id @default(cuid())
+  logoId          String
+  versionNumber   Int
+  imageUrl        String
+  prompt          String
+  editInstruction String?
+  maskUrl         String?
+  seed            Int?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  
+  logo            Logo     @relation(fields: [logoId], references: [id], onDelete: Cascade)
+  
+  @@unique([logoId, versionNumber])
+  @@index([logoId])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  userId    String
+  stripeId  String   @unique
+  amount    Int
+  currency  String   @default("usd")
+  status    String
+  type      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
